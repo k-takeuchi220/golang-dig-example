@@ -1,0 +1,33 @@
+version: '3'
+services:
+  db:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - ./docker/db/persistence:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: example
+    container_name: go-mysql
+    ports:
+      - 3307:3307
+    networks:
+        - external
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=go-mysql
+      - PMA_USER=root
+      - PMA_PASSWORD=password
+    ports:
+      - 8081:80
+    networks:
+      - external
+
+networks:
+  external:
+    driver: bridge
+    internal: false
+    name: network
